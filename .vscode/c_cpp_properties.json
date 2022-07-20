@@ -8,8 +8,8 @@
         {
             "name": "PlatformIO",
             "includePath": [
-                "d:/projeler/Martur/en_olcme/TopSarma/kod/step_driver_two/include",
-                "d:/projeler/Martur/en_olcme/TopSarma/kod/step_driver_two/src",
+                "d:/projeler/Martur/en_olcme/TopSarma/kod/en_olcme_two/measuring_width_two/include",
+                "d:/projeler/Martur/en_olcme/TopSarma/kod/en_olcme_two/measuring_width_two/src",
                 "C:/Users/RealTekno/.platformio/packages/framework-arduinoespressif32/libraries/Wire/src",
                 "C:/Users/RealTekno/.platformio/packages/framework-arduinoespressif32/tools/sdk/include/config",
                 "C:/Users/RealTekno/.platformio/packages/framework-arduinoespressif32/tools/sdk/include/app_trace",
@@ -110,8 +110,8 @@
             "browse": {
                 "limitSymbolsToIncludedHeaders": true,
                 "path": [
-                    "d:/projeler/Martur/en_olcme/TopSarma/kod/step_driver_two/include",
-                    "d:/projeler/Martur/en_olcme/TopSarma/kod/step_driver_two/src",
+                    "d:/projeler/Martur/en_olcme/TopSarma/kod/en_olcme_two/measuring_width_two/include",
+                    "d:/projeler/Martur/en_olcme/TopSarma/kod/en_olcme_two/measuring_width_two/src",
                     "C:/Users/RealTekno/.platformio/packages/framework-arduinoespressif32/libraries/Wire/src",
                     "C:/Users/RealTekno/.platformio/packages/framework-arduinoespressif32/tools/sdk/include/config",
                     "C:/Users/RealTekno/.platformio/packages/framework-arduinoespressif32/tools/sdk/include/app_trace",
