@@ -2,152 +2,116 @@
 
 #include "main.h"
 
-uint8_t tx_buffer[128];
-uint8_t rx_buffer[128];
-word modbus_start_address=0;
-byte byteFNRx = MB_FC_NONE;
-bool modbus_busy=false;
+bool wifi_durumu=false;
 
-bool checkRX(){
+void wifi_init(){
 
-
-
-  if (Wire.available()>0) {
-
+  ///WIFI SETUP///
+    WiFi.setAutoConnect(false);
+    WiFi.setAutoReconnect(false);
+    WiFi.disconnect(false);       // Wifi OFF
+    WiFi.softAPdisconnect(false); // Wifi already OFF
     
-      byteFNRx=MB_FC_NONE;
+    WiFi.softAP(wifi_begin[ap_ssid].c_str(), wifi_begin[ap_password].c_str());
+    WiFi.mode(WIFI_AP_STA);    
     
-      int size =Wire.readBytes(rx_buffer,Wire.available());
-
-      // for (size_t i = 0; i <size ; i++)
-      // {
-      //   Serial.print(rx_buffer[i]);
-      // }
-      // Serial.println();
-
-      modbus_busy=false;
-     
-
-      //// rutine Modbus TCP
-      byteFNRx = rx_buffer[MB_TCP_FUNC];      
-      
-     
-    
-     
-     // Handle request
-     
-     switch(byteFNRx) {
-        case MB_FC_NONE:
-        return false; 
-        break;
-
-        case MB_FC_READ_REGISTERS: // 03 Read Holding Registers
-         // Serial.print("Value:");
-          for(int i = 0; i < (rx_buffer[MB_TCP_RX_BYTE_LEN]/2); i++)
-          {
-            byteFNRx = MB_FC_NONE; 
-            
-            
-            
-              byte tempLow=rx_buffer[(MB_TCP_RX_DATA+1) + (i * 2)];
-              byte tempHigh=rx_buffer[ MB_TCP_RX_DATA + (i * 2)];
-              
-              device_register[modbus_start_address+i]=makeWord(tempHigh,tempLow);
-        //  Serial.print(device_register[modbus_start_address+i]);
-         // Serial.print(",");
-              
-          }
-         // Serial.println();
-         
-          digitalWrite(0,HIGH);
-          delayMicroseconds(10);
-          digitalWrite(0,LOW);
-
-        break;
-  
-        case MB_FC_WRITE_REGISTER:      
-        case MB_FC_WRITE_MULTIPLE_REGISTERS: // 06 Write Holding Register         
-              
-        break;
-            
+    WiFi.config(IPAddress(wifi_config[sta_ip]), IPAddress(wifi_config[sta_gateway]), IPAddress(wifi_config[sta_subnet]), IPAddress(wifi_config[sta_dns]));
+    WiFi.begin(wifi_begin[sta_ssid].c_str(), wifi_begin[sta_password].c_str());
+   
+    // Wait for connection
+    uint8_t i = 0;
+    while (WiFi.status() != WL_CONNECTED && i < 6)
+    { 
+      delay(500);
+      i++ ;
+    }
+    if (i == 6)
+    {
+      wifi_durumu = false;
+      Serial.print("Could not connect to");
+      Serial.println(wifi_begin[sta_ssid]);
+      WiFi.disconnect();
+    }
+    else
+    {
+      wifi_durumu = true;
+      Serial.print("Connected! IP address: ");
+      Serial.println(WiFi.localIP());
+      WiFi.setAutoConnect(true);
+      WiFi.setAutoReconnect(true);
     }
 
-  } 
- return true; 
-     
-}
- 
-
-
-ulong modbus_t=0;
-ulong modbus_timeout=0;
-void mb_read_holding_register(int start_address,int number_of_value,int timeout)
-{
-
-  if(modbus_busy){
-    if((millis()-modbus_t)<modbus_timeout)
-      return;
-  }
-      digitalWrite(0,HIGH);
-      delayMicroseconds(10);
-      digitalWrite(0,LOW);
-  modbus_start_address=start_address;
-  modbus_t=millis();
-  modbus_timeout=timeout;
-  modbus_busy=true;
-  int ByteDataLength = number_of_value * 2;
-  int MessageLength = 11;
-  tx_buffer[MB_TCP_LEN] =highByte(ByteDataLength + 4);
-  tx_buffer[MB_TCP_LEN+1] =lowByte(ByteDataLength + 4);
-  tx_buffer[MB_TCP_FUNC]=MB_FC_READ_REGISTERS;
-  tx_buffer[MB_TCP_REGISTER_START]=highByte(start_address);
-  tx_buffer[MB_TCP_REGISTER_START+1]=lowByte(start_address);  
-  
-  tx_buffer[MB_TCP_REGISTER_NUMBER]=highByte(number_of_value);
-  tx_buffer[MB_TCP_REGISTER_NUMBER+1]=lowByte(number_of_value);
-  
-  
-  Wire.beginTransmission(4);
-  Wire.write(tx_buffer,MessageLength);
-  Wire.endTransmission();
-  Wire.requestFrom(4,ByteDataLength+9);
-
+  /////////////
 }
 
 
 
 
-void mb_write_holding_register(int start_address,int number_of_value,int timeout)
-{
+byte mymac[6];
+const byte myMac[] PROGMEM = {0x70, 0x69, 0x69, 0x2D, 0x30, 0x31};
+byte Ethernet::buffer[3000];
+#define ETH_CS_PIN 25
+void ethernet_init(){
+Serial.println("merhaba");
+    WiFi.macAddress(mymac);
+    mymac[0] = 0X70;
+    mymac[1] = 0X69;
+    mymac[2] = 0X69;
+    
+    char macStr[18] = { 0 };
+      sprintf(macStr, "%02X:%02X:%02X:%02X:%02X:%02X", mymac[0], mymac[1], mymac[2], mymac[3], mymac[4], mymac[5]);
+    Serial.println(macStr);
+    if (!ether.begin(sizeof Ethernet::buffer, mymac, ETH_CS_PIN))
+    {
+      Serial.println(F("Failed to initialize Ethernet controller"));
+    }
+    else
+    Serial.println(F("Ethernet controller initialized"));
+    
+    
+    // delay(200);
+    // if(ether.isLinkUp()||!wifi_durumu)      
+    // {
+    //   if(ether.dhcpSetup()){          
+    //     Serial.println(F("DHCP OK"));         
+    //   }
+    //   ethernet_durumu=true;
+    // }
+         if(ether.dhcpSetup()){          
+        Serial.println(F("DHCP OK"));         
+       }
+    eth_config[eth_ip][0]=192;
+    eth_config[eth_ip][1]=168;
+    eth_config[eth_ip][2]=0;
+    eth_config[eth_ip][3]=5;
+    eth_config[eth_subnet][0]=255;
+    eth_config[eth_subnet][1]=255;
+    eth_config[eth_subnet][2]=255;
+    eth_config[eth_subnet][3]=0;
+    if (!ether.staticSetup(eth_config[eth_ip], eth_config[eth_gateway], eth_config[eth_dns], eth_config[eth_subnet]))
+    {
+      Serial.println(F("Failed to set IP address"));
+    }
+    
+    
+    ether.printIp("IP:  ", ether.myip);
+    ether.printIp("GW:  ", ether.gwip);
+    ether.printIp("DNS: ", ether.dnsip);
 
- if(modbus_busy){
-    if((millis()-modbus_t)<modbus_timeout)
-      return;
-  }
-   modbus_start_address=start_address;
-  modbus_t=millis();
-  modbus_timeout=timeout;
-  modbus_busy=true;
-  int ByteDataLength=number_of_value * 2;
-  int MessageLength = ByteDataLength + 13;
-  tx_buffer[MB_TCP_FUNC]=MB_FC_WRITE_MULTIPLE_REGISTERS;
-  tx_buffer[MB_TCP_REGISTER_START]=highByte(start_address);  
-  tx_buffer[MB_TCP_REGISTER_START+1]=lowByte(start_address);  
+    ether.printIp("Configured IP address:\t", ether.myip);
+    Serial.println();
+}
 
-   
-  tx_buffer[MB_TCP_LEN] =highByte(ByteDataLength + 7);
-  tx_buffer[MB_TCP_LEN+1] =lowByte(ByteDataLength + 7); 
+void rs485_init(){
 
-  tx_buffer[MB_TCP_REGISTER_NUMBER] = highByte(number_of_value);
-  tx_buffer[MB_TCP_REGISTER_NUMBER+1] = lowByte(number_of_value);
-  tx_buffer[MB_TCP_BYTE_DATA_LEN] = ByteDataLength;
-  for(int i = 0; i < number_of_value; i++)
-  {
-  tx_buffer[ MB_TCP_WRITE_DATA + (i * 2)] = highByte(device_register[start_address + i]);// high byte
-  tx_buffer[MB_TCP_WRITE_DATA+1 + (i * 2)] = lowByte(device_register[start_address + i]);// low byte
-  }
-  Wire.beginTransmission(4);
-  Wire.write(tx_buffer,MessageLength);
-  Wire.endTransmission();
-  Wire.requestFrom(4,12); //fdvdf
+  Serial.begin(115200); 
+  pinMode(0,OUTPUT);
+  digitalWrite(0,LOW);
+
+}
+void i2c_init(){
+  Wire.begin(SDA_PIN, SCL_PIN,1000000);   // join i2c bus
+}
+void spi_init(){
+
 }

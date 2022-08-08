@@ -1,25 +1,31 @@
 #include "main.h"
 
-const int LEDPin = 25;  /* GPIO16 */
 
 void setup() {
- 
+
+  
   sys_init();
+
+
 }
- 
+int calisma_mode=0;
+int calisma_mode_temp=0;
 
-
-
-float serial_target=0;
-int rezonans=0;
-bool led=false;
-int tempduty=0;
-int duty=2047;
 void loop() {
- 
+  sys_loop();
+    if (Serial.available()) {
+    String num = Serial.readString();
+    calisma_mode=num.toInt();
+    Serial.print("Duty received:");
+    Serial.println(num);
+    
 
-    //sys_loop();
+  }
+    if(calisma_mode!=calisma_mode_temp){
+    step1_calisma_modu=calisma_mode;
+    step2_calisma_modu=calisma_mode;
 
-
+    calisma_mode_temp=calisma_mode;
+  }
 }
 

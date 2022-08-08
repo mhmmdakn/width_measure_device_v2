@@ -1,6 +1,7 @@
 #pragma once
 
-
-void mb_read_holding_register(int start_address,int number_of_value,int timeout=1000);
-void mb_write_holding_register(int start_address,int number_of_value,int timeout=1000);
-bool checkRX();
+void wifi_init();
+void ethernet_init();
+void rs485_init();
+void i2c_init();
+void spi_init();
