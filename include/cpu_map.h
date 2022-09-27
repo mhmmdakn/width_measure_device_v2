@@ -19,3 +19,5 @@
 
 #define SDA_PIN 21
 #define SCL_PIN 22
+
+#define DE_RE_PIN 0 //IO0 

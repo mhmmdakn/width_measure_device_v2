@@ -2,116 +2,133 @@
 
 #include "main.h"
 
-bool wifi_durumu=false;
+#include "EthernetWebServer.hpp"
+bool wifi_durumu = false;
+WiFiServer mb_tcp_wifi_server(502);
 
-void wifi_init(){
+void wifi_init()
+{
 
-  ///WIFI SETUP///
-    WiFi.setAutoConnect(false);
-    WiFi.setAutoReconnect(false);
-    WiFi.disconnect(false);       // Wifi OFF
-    WiFi.softAPdisconnect(false); // Wifi already OFF
-    
-    WiFi.softAP(wifi_begin[ap_ssid].c_str(), wifi_begin[ap_password].c_str());
-    WiFi.mode(WIFI_AP_STA);    
-    
-    WiFi.config(IPAddress(wifi_config[sta_ip]), IPAddress(wifi_config[sta_gateway]), IPAddress(wifi_config[sta_subnet]), IPAddress(wifi_config[sta_dns]));
-    WiFi.begin(wifi_begin[sta_ssid].c_str(), wifi_begin[sta_password].c_str());
-   
-    // Wait for connection
-    uint8_t i = 0;
-    while (WiFi.status() != WL_CONNECTED && i < 6)
-    { 
-      delay(500);
-      i++ ;
-    }
-    if (i == 6)
-    {
-      wifi_durumu = false;
-      Serial.print("Could not connect to");
-      Serial.println(wifi_begin[sta_ssid]);
-      WiFi.disconnect();
-    }
-    else
-    {
-      wifi_durumu = true;
-      Serial.print("Connected! IP address: ");
-      Serial.println(WiFi.localIP());
-      WiFi.setAutoConnect(true);
-      WiFi.setAutoReconnect(true);
-    }
+  WiFi.setAutoConnect(false);
+  WiFi.setAutoReconnect(false);
+  WiFi.disconnect(false);       // Wifi OFF
+  WiFi.softAPdisconnect(false); // Wifi already OFF
 
-  /////////////
+  WiFi.softAP(RK.readString(ap_ssid).c_str(), RK.readString(ap_password).c_str());
+  WiFi.mode(WIFI_AP_STA);
+
+  WiFi.config(RK.readUInt(sta_ip), RK.readUInt(sta_gateway), RK.readUInt(sta_subnet), RK.readUInt(sta_dns));
+  WiFi.begin(RK.readString(sta_ssid).c_str(), RK.readString(sta_password).c_str());
+  // WiFi.config(IPAddress(192,168,2,20),IPAddress(192,168,2,1),IPAddress(255,255,255,0));
+  // WiFi.begin("REALTEKNO","realtekno2021");
+  //  // Wait for connection
+  uint8_t i = 0;
+  while ((WiFi.status() != WL_CONNECTED) && i < 100)
+  {
+    delay(100);
+    i++;
+  }
+  if (i == 100)
+  {
+    wifi_durumu = false;
+    Serial.print("Could not connect to");
+    Serial.println(RK.readString(sta_ssid));
+    Serial.println(RK.readString(sta_password));
+  }
+  else
+  {
+    wifi_durumu = true;
+    Serial.print("Connected! IP address: ");
+    Serial.println(WiFi.localIP());
+    WiFi.setAutoConnect(true);
+    WiFi.setAutoReconnect(true);
+  }
+
+  mb_tcp_wifi_server.begin();
+  // server.onNotFound(handleNotFound);
+
+  // server.begin();
+
+  wifi_webserver_init();
 }
 
+#define CLIENT_MAX_COUNT 5
+WiFiClient clients[CLIENT_MAX_COUNT];
+bool client_add = 0;
+void wifi_loop()
+{
 
+  WiFiClient client = mb_tcp_wifi_server.available();
+  client_add = false;
+  for (size_t i = 0; i < CLIENT_MAX_COUNT; i++)
+  {
 
+    if (clients[i])
+    {
+      if (clients[i].connected())
+      {
+        handleModbusData<WiFiClient>(clients[i], TCP);
+      }
+      else
+      {
+        clients[i].stop();
+      }
+    }
+    else if (client)
+    {
+      if (!client_add)
+      {
+        clients[i] = client;
+      }
+      client_add = true;
+    }
+  }
 
-byte mymac[6];
-const byte myMac[] PROGMEM = {0x70, 0x69, 0x69, 0x2D, 0x30, 0x31};
-byte Ethernet::buffer[3000];
+  wifi_websever_handle_client();
+}
+
+uint8_t myMac[6];
+EthernetServer mb_tcp_eth_server(502);
+
 #define ETH_CS_PIN 25
-void ethernet_init(){
-Serial.println("merhaba");
-    WiFi.macAddress(mymac);
-    mymac[0] = 0X70;
-    mymac[1] = 0X69;
-    mymac[2] = 0X69;
-    
-    char macStr[18] = { 0 };
-      sprintf(macStr, "%02X:%02X:%02X:%02X:%02X:%02X", mymac[0], mymac[1], mymac[2], mymac[3], mymac[4], mymac[5]);
-    Serial.println(macStr);
-    if (!ether.begin(sizeof Ethernet::buffer, mymac, ETH_CS_PIN))
-    {
-      Serial.println(F("Failed to initialize Ethernet controller"));
-    }
-    else
-    Serial.println(F("Ethernet controller initialized"));
-    
-    
-    // delay(200);
-    // if(ether.isLinkUp()||!wifi_durumu)      
-    // {
-    //   if(ether.dhcpSetup()){          
-    //     Serial.println(F("DHCP OK"));         
-    //   }
-    //   ethernet_durumu=true;
-    // }
-         if(ether.dhcpSetup()){          
-        Serial.println(F("DHCP OK"));         
-       }
-    eth_config[eth_ip][0]=192;
-    eth_config[eth_ip][1]=168;
-    eth_config[eth_ip][2]=0;
-    eth_config[eth_ip][3]=5;
-    eth_config[eth_subnet][0]=255;
-    eth_config[eth_subnet][1]=255;
-    eth_config[eth_subnet][2]=255;
-    eth_config[eth_subnet][3]=0;
-    if (!ether.staticSetup(eth_config[eth_ip], eth_config[eth_gateway], eth_config[eth_dns], eth_config[eth_subnet]))
-    {
-      Serial.println(F("Failed to set IP address"));
-    }
-    
-    
-    ether.printIp("IP:  ", ether.myip);
-    ether.printIp("GW:  ", ether.gwip);
-    ether.printIp("DNS: ", ether.dnsip);
 
-    ether.printIp("Configured IP address:\t", ether.myip);
-    Serial.println();
+void ethernet_init()
+{
+  WiFi.macAddress(myMac);
+  myMac[0] = 0X70;
+  myMac[1] = 0X69;
+  myMac[2] = 0X69;
+  SPI = SPIClass(HSPI);
+  Ethernet.init(ETH_CS_PIN);
+  Ethernet.begin(myMac, RK.readUInt(eth_ip), RK.readUInt(eth_dns), RK.readUInt(eth_gateway));
+
+  mb_tcp_eth_server.begin();
+  ethernet_webserver_init();
 }
 
-void rs485_init(){
-
-  Serial.begin(115200); 
-  pinMode(0,OUTPUT);
-  digitalWrite(0,LOW);
-
+void ethernet_loop()
+{
+  EthernetClient client = mb_tcp_eth_server.available(); // returns first client which has data to read or a 'false' client
+  handleModbusData<UIPClient>(client, TCP);
+  ethernet_websever_handle_client();
 }
-void i2c_init(){
-  Wire.begin(SDA_PIN, SCL_PIN,1000000);   // join i2c bus
-}
-void spi_init(){
 
+RS485 rs485(&Serial);
+void rs485_init()
+{
+
+  rs485.begin(115200, DE_RE_PIN);
+}
+
+void rs485_loop()
+{
+  handleModbusData<RS485>(rs485, RTU);
+}
+
+void i2c_init()
+{
+  Wire.begin(SDA_PIN, SCL_PIN, 1000000); // join i2c bus
+}
+void spi_init()
+{
 }

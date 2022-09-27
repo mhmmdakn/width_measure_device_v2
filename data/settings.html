@@ -1,0 +1,264 @@
+<html>
+<head>
+<title>RealTekno</title>
+<meta name='viewport' content='width=device-width, initial-scale=1' >
+<meta charset="UTF-8"/>
+<link rel='stylesheet' href='b.css'>
+<link rel='stylesheet' href='style.css'>
+
+
+</head>
+<body>
+  <div class='pill-nav'>
+  <div class='logo'>
+ <b style='color:blue;'>REAL</b><b style='color:orange;'>TEKNO</b>   
+ <div class='model' ><b >WM-2400-A</b></div>
+ </div>
+  <a href='/'>Dashboard</a>
+  <a class='active' href='settings.html'>Settings</a>  
+  <a href='log.html'>Log</a>
+  <a href='maintenance.html'>Maintenance</a>
+</div>    
+<div class='row'>
+  <div class='col-75'>
+    <div class='container'>
+      <form id="form">                 
+        <div class='row'>
+          <div class='col-md-4 col-xs-12'>
+            <h3>WiFi Security Settings </h3>
+            <label >STA SSID</label>
+            <div class='row'><input type='text' name='sta_ssid|N' placeholder='ssid' maxlength="30" required></div>
+            <label >STA PASSWORD </label>
+            <div class='row'><input type='text' name='sta_password|N' placeholder='password'  maxlength="30" required></div>
+            <label > AP SSID</label>
+            <div class='row'><input type='text' name='ap_ssid|N' placeholder='ssid' maxlength="30" required ></div>
+             <label > AP PASSWORD</label>
+            <div class='row'><input type='text' name='ap_password|N' placeholder='ssid'  maxlength="30" required ></div>
+            </div>
+          <div class='col-md-4 col-xs-12 config'>
+            <h3>WiFi Settings </h3>            
+            <label for='sta_ip'>IP</label>
+            <div class='row'>
+              <div class='ip' >                
+                <input type='number' name='sta_ip|b|0' placeholder='192' min="0" max="255" required>
+              </div>
+              <div class='ip'>                
+                <input type='number' name='sta_ip|b|1' placeholder='168'  min="0" max="255" required>
+              </div>
+              <div class='ip'>             
+                <input type='number' name='sta_ip|b|2' placeholder='1'  min="0" max="255" required>
+              </div>
+              <div class='ip'>               
+                <input type='number' name='sta_ip|b|3' placeholder='100'  min="0" max="255" required>
+              </div>
+            </div>
+             <label for='sta_subnet'>SUBNET</label>
+            <div class='row'>
+              <div class='ip' >                
+                <input type='number' name='sta_subnet|b|0' placeholder='255'  min="0" max="255" required>
+              </div>
+              <div class='ip'>                
+                <input type='number' name='sta_subnet|b|1' placeholder='255'  min="0" max="255" required>
+              </div>
+              <div class='ip'>               
+                <input type='number' name='sta_subnet|b|2' placeholder='255'  min="0" max="255" required>
+              </div>
+              <div class='ip'>                
+                <input type='number' name='sta_subnet|b|3' placeholder='0'  min="0" max="255" required>
+              </div>
+            </div>
+            <label for='sta_gateway'>GATEWAY</label>
+            <div class='row'>
+              <div class='ip' >          
+                <input type='number' name='sta_gateway|b|0' placeholder='192'  min="0" max="255" required>
+              </div>
+              <div class='ip'>                
+                <input type='number' name='sta_gateway|b|1' placeholder='168'  min="0" max="255" required>
+              </div>
+              <div class='ip'>                
+                <input type='number' name='sta_gateway|b|2' placeholder='1'  min="0" max="255" required>
+              </div>
+              <div class='ip'>                
+                <input type='number' name='sta_gateway|b|3' placeholder='1'  min="0" max="255" required>
+              </div>
+            </div>
+           <label for='sta_dns'>DNS</label>
+            <div class='row'>
+              <div class='ip' >          
+                <input type='number' name='sta_dns|b|0' placeholder='0'  min="0" max="255" required>
+              </div>
+              <div class='ip'>                
+                <input type='number' name='sta_dns|b|1' placeholder='0'  min="0" max="255" required>
+              </div>
+              <div class='ip'>                
+                <input type='number' name='sta_dns|b|2' placeholder='0'  min="0" max="255" required>
+              </div>
+              <div class='ip'>                
+                <input type='number' name='sta_dns|b|3' placeholder='0'  min="0" max="255" required>
+              </div>             
+            </div>           
+          </div>
+          <div class='col-md-4 col-xs-12 config'>
+            <h3>Ethernet Settings </h3>            
+            <label for='eth_ip'>IP</label>
+            <div class='row'>
+              <div class='ip' >                
+                <input type='number' name='eth_ip|b|0' placeholder='192'  min="0" max="255" required>
+              </div>
+              <div class='ip'>                
+                <input type='number' name='eth_ip|b|1' placeholder='168'  min="0" max="255" required>
+              </div>
+              <div class='ip'>             
+                <input type='number' name='eth_ip|b|2' placeholder='1'  min="0" max="255" required>
+              </div>
+              <div class='ip'>               
+                <input type='number' name='eth_ip|b|3' placeholder='100'  min="0" max="255" required>
+              </div>
+            </div>
+             <label for='eth_subnet'>SUBNET</label>
+            <div class='row'>
+              <div class='ip' >                
+                <input type='number' name='eth_subnet|b|0' placeholder='255'  min="0" max="255" required>
+              </div>
+              <div class='ip'>                
+                <input type='number' name='eth_subnet|b|1' placeholder='255'  min="0" max="255" required>
+              </div>
+              <div class='ip'>               
+                <input type='number' name='eth_subnet|b|2' placeholder='255'  min="0" max="255" required>
+              </div>
+              <div class='ip'>                
+                <input type='number' name='eth_subnet|b|3' placeholder='0'  min="0" max="255" required>
+              </div>
+            </div>
+            <label for='eth_gateway'>GATEWAY</label>
+            <div class='row'>
+              <div class='ip' >          
+                <input type='number' name='eth_gateway|b|0' placeholder='192'  min="0" max="255" required>
+              </div>
+              <div class='ip'>                
+                <input type='number' name='eth_gateway|b|1' placeholder='168'  min="0" max="255" required>
+              </div>
+              <div class='ip'>                
+                <input type='number' name='eth_gateway|b|2' placeholder='1'  min="0" max="255" required>
+              </div>
+              <div class='ip'>                
+                <input type='number' name='eth_gateway|b|3' placeholder='1'  min="0" max="255" required>
+              </div>
+            </div>
+           <label for='eth_dns'>DNS</label>
+            <div class='row'>
+              <div class='ip' >          
+                <input type='number' name='eth_dns|b|0' placeholder='0'  min="0" max="255" required>
+              </div>
+              <div class='ip'>                
+                <input type='number' name='eth_dns|b|1' placeholder='0'  min="0" max="255" required>
+              </div>
+              <div class='ip'>                
+                <input type='number' name='eth_dns|b|2' placeholder='0'  min="0" max="255" required>
+              </div>
+              <div class='ip'>                
+                <input type='number' name='eth_dns|b|3' placeholder='0'  min="0" max="255" required>
+              </div>             
+            </div>           
+          </div>  
+         
+        </div> 
+        <div class='row'>
+          <div class='col-100'>
+            <h3>Device Settings</h3>
+              <div class='row'>
+              <div class='column'>
+               <label >Reference Length (mm)</label>
+               <input type='text' name='referans_uzunluk_mm|d' placeholder='2400' >
+              </div>
+              <div class='column'>
+                <label for='width_mode'>Width Mode</label>
+                <select name="width_mode|S" required="">
+                    <option value="0">Mode 1</option>
+                    <option value="1">Mode 2</option>
+                    <option value="2">Mode 3</option>
+                </select> 
+              </div>
+              <div class='column'>
+               <label>Slave Id</label>
+               <input type='text' name='slave_id|S' placeholder='1' >
+              </div>
+              <!-- <div class='column'>
+               <label for='number_of_samples_for_fabric'>Sampling Reference </label>
+               <input type='text' name='dc_14_0' placeholder='5' value='%dc_14_0%'>
+              </div>               -->
+             </div> 
+           
+          </div> 
+        
+        <button type='submit'>Save</button>
+          &nbsp;</form>
+    </div>
+  </div>
+</div>
+
+<script>
+   
+    var xhr = new XMLHttpRequest();
+    xhr.open("POST", "/processor_read");
+    xhr.onload = () => {
+
+      if (xhr.readyState === xhr.DONE) {
+        if (xhr.status === 200) {
+
+          const searchParams = new URLSearchParams(xhr.responseText);
+
+
+          for (const p of searchParams) {
+            
+            document.getElementsByName(p[0])[0].value = p[1];
+          }
+
+        }
+      }
+      
+    }
+
+    var form = document.querySelector('form');
+    var data = new FormData(form);
+
+
+    xhr.send(data);
+
+    //convert FormData to Object
+    var serializeFormToObject = function (form) {
+      var objForm = {};
+      var formData = new FormData(form);
+      for (var key of formData.keys()) {
+        objForm[key] = formData.get(key);
+        console.log(key + "=" + formData.get(key) + "&");
+      }
+      return objForm;
+    };
+
+    document.addEventListener('submit', function (event) {
+      event.preventDefault();
+      var xhr = new XMLHttpRequest();
+      xhr.open("POST", "/processor_write");
+      
+      xhr.onload = () => {
+        if (xhr.readyState === xhr.DONE) {
+          if (xhr.status === 200) {
+
+            if(xhr.responseText=="success"){
+              alert("Başarıyla Kaydedildi");
+            }
+          }
+        }     
+      }
+      var form = document.querySelector('form');
+      var data = new FormData(form);
+      xhr.send(data);
+      
+    });
+
+
+  
+</script>
+</body>
+</html>

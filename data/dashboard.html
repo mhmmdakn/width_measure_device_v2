@@ -1,0 +1,97 @@
+
+<html>
+<head>
+<meta name='viewport' content='width=device-width, initial-scale=1'>
+<link rel='stylesheet' href='style.css'>
+
+
+
+
+<script>
+function loadXMLDoc() {
+  var xhttp = new XMLHttpRequest();
+  xhttp.onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200) {
+      var myObj = JSON.parse(this.responseText);
+      document.getElementById('en_mm').innerHTML = myObj.en_mm;
+      document.getElementById('step1_pos_meas_mm').innerHTML = myObj.step1_pos_meas_mm;
+      document.getElementById('step2_pos_meas_mm').innerHTML = myObj.step2_pos_meas_mm;
+      document.getElementById('step1_pos_actual_mm').innerHTML = myObj.step1_pos_actual_mm;
+      document.getElementById('step2_pos_actual_mm').innerHTML = myObj.step2_pos_actual_mm;
+
+      if(myObj.RSII<-90)
+          document.getElementById("RSII").src="wifi-0.png";
+      else if(myObj.RSII<-80)
+          document.getElementById("RSII").src="wifi-25.png";
+      else if(myObj.RSII<-70)
+          document.getElementById("RSII").src="wifi-50.png";
+      else if(myObj.RSII<-67)
+          document.getElementById("RSII").src="wifi-75.png";
+      else if(myObj.RSII<-30)
+          document.getElementById("RSII").src="wifi-100.png";
+      else if(myObj.RSII==0)
+          document.getElementById("RSII").src="wifi-0.png";
+    
+
+    }
+  };
+  xhttp.open('GET', '/data', true);
+  xhttp.send();
+}
+setInterval(()=>{if (!document.hidden)loadXMLDoc();},1000);
+</script>
+</head>
+<body>
+
+  <div class='pill-nav'>
+    <div class='logo'>
+   <b style='color:blue;'>REAL</b><b style='color:orange;'>TEKNO</b>   
+   <div class='model' ><b >WM-2400-A</b></div>
+   </div>
+   <img id="RSII" style="float: right;right: 30px;position: relative;top: 10px;width: 50px;" src="wifi-0.png">
+   <a class='active' href='/'>Dashboard</a>
+   <a href='settings.html'>Settings</a>  
+   <a href='log.html'>Log</a>
+   <a href='bakim.html'>Maintenance</a>
+  </div>
+
+   <div class='row' >
+    <div class='card' style="width: 100%;">
+      <h5>Width</h5>
+      <h1 id='en_mm' style='color:rgb(21, 255, 0);'>--</h1>
+      <h5>mm</h5>
+    </div>
+   </div>
+<div class='row'>  
+  <div class='column'>
+    <div class='card'>
+      <h5>M1 Position Measured</h5>
+      <h1 id='step1_pos_meas_mm' style='color:red;'>--</h1>
+      <h5>mm</h5>
+    </div>
+  </div>
+  <div class='column'>
+    <div class='card'>
+      <h5>M1 Position Actual</h5>
+      <h1 id='step1_pos_actual_mm' style='color:green;'>--</h1>
+      <h5>__</h5>
+    </div>
+  </div>
+  <div class='column'>
+    <div class='card'>
+      <h5>M2 Position Measured</h5>
+      <h1 id='step2_pos_meas_mm' style='color:orange;'>--</h1>
+      <h5>mm</h5>
+    </div>
+  </div>   
+  <div class='column'>
+    <div class='card'>
+      <h5>M2 Position Actual</h5>
+      <h1 id='step2_pos_actual_mm' style='color:blue;'>--</h1>
+      <h5>mm</h5>
+    </div>
+  </div>
+</div>
+</body>
+</html>
+

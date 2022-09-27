@@ -1,0 +1,104 @@
+<html>
+
+<head>
+  <title>RealTekno</title>
+  <meta name='viewport' content='width=device-width, initial-scale=1'>
+  <meta charset="UTF-8" />
+  <link rel='stylesheet' href='b.css'>
+  <link rel='stylesheet' href='style.css'>
+
+
+
+
+</head>
+
+<body>
+  <div class='pill-nav'>
+    <div class='logo'>
+      <b style='color:blue;'>REAL</b><b style='color:orange;'>TEKNO</b>
+      <div class='model'><b>WM-2400-A</b></div>
+    </div>
+    <a href='/'>Gösterge Paneli</a>
+    <a class='active' href='wifi_settings.html'>Ağ Ayarları</a>
+    <a href='device_settings.html'>Cihaz Ayarları </a>
+    <a href='log.html'>Günlük Hata Kayıtları</a>
+    <a href='bakim.html'>Bakım</a>
+  </div>
+  <div class='row'>
+    <div class='col-75'>
+      <div class='container'>
+        <form id="form">
+
+          <div class='row'>
+            <div class='col-md-4 col-xs-12'>
+              <h3>WiFi Güvenlik Ayarlar </h3>
+              <label for='1'>STA SSID</label>
+              <div class='row'><input type='text' name='sta_ssid|N' placeholder='ssid' maxlength="30" required></div>
+              <label for='17'>STA PASSWORD </label>
+              <div class='row'><input type='text' name='sta_password|N|1' placeholder='password' maxlength="30"
+                  required></div>
+              <label for='33'> AP SSID</label>
+              <div class='row'><input type='text' name='ap_ssid|N' placeholder='ssid' maxlength="30" required></div>
+              <label for='49'> AP PASSWORD</label>
+              <div class='row'><input type='text' name='ap_password|N' placeholder='ssid' maxlength="30" required></div>
+            </div>
+
+
+          </div>
+          <button>Kaydet</button>
+          &nbsp;
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    var xhr = new XMLHttpRequest();
+    xhr.open("POST", "/processor_read");
+    xhr.onload = () => {
+
+      if (xhr.readyState === xhr.DONE) {
+        if (xhr.status === 200) {
+
+          const searchParams = new URLSearchParams(xhr.responseText);
+
+
+          for (const p of searchParams) {
+            console.log(p);
+            document.getElementsByName(p[0])[0].value = p[1];
+          }
+
+        }
+      }
+      console.log("response ESP32");
+    }
+
+    var form = document.querySelector('form');
+    var data = new FormData(form);
+
+
+    xhr.send(data);
+
+    //convert FormData to Object
+    var serializeFormToObject = function (form) {
+      var objForm = {};
+      var formData = new FormData(form);
+      for (var key of formData.keys()) {
+        objForm[key] = formData.get(key);
+        console.log(key + "=" + formData.get(key) + "&");
+      }
+      return objForm;
+    };
+
+    document.addEventListener('submit', function (event) {
+      event.preventDefault();
+
+      // serializeFormToObject(event.target)
+      // console.log("merhaba");
+    });
+
+
+  </script>
+</body>
+
+</html>

@@ -6,16 +6,16 @@
 // dişli çevresi = 40mm
 
 
-double a1=1000; 
-double a2=64000;
-double a3=64000;
-double a3_t=0.015;
+double a1=800; 
+double a2=51200; // pulse/s^2
+double a3=51200; //pulse/s^2
+double a3_t=0.015;  // saniye
 
-double min_hiz=80.0; //80.0
-double mid_hiz=400;  //400
-double max_hiz=8000; //10000
-double home_hiz=2500;  
-double home_hiz_yaklasma=80.0;  
+double min_hiz=64.0; //pulse/s
+double mid_hiz=320;  //pulse/s
+double max_hiz=6400; // pulse/s
+double home_hiz=2000;  //pulse/s
+double home_hiz_yaklasma=64.0;  
 
 
 double rampa_x=(pow(max_hiz,2)-pow(min_hiz,2))/(2*a2);
@@ -91,6 +91,19 @@ void step_init(){
 
   
 }
+void step_disable(){
+
+step1_calisma_modu=step2_calisma_modu=0;
+hiz1=hiz2=min_hiz;
+timerAlarmDisable(timer1);
+}
+void step_enable(){
+timerAlarmEnable(timer1);
+hiz1=hiz2=min_hiz;
+step1_calisma_modu=step2_calisma_modu=3;
+}
+
+
 
 
 void home_task(void * parameter ){
@@ -192,7 +205,7 @@ void home_task(void * parameter ){
     {
       //todo:travel error eklenecek, adimlar için timeout eklenebilir.
     case 0:
-      if(digitalRead(M1_LIMIT_NEG))
+      if(digitalRead(M2_LIMIT_NEG))
         m2_home_adim=2;
       else
         m2_home_adim=1;
@@ -242,9 +255,6 @@ void home_task(void * parameter ){
     default:
       break;
     }
- 
-
-
     vTaskDelay(10 / portTICK_PERIOD_MS);
   }
 
@@ -281,9 +291,6 @@ void IRAM_ATTR lazer1_int() {
     a3=hiz1/a3_t;
     step1_calisma_modu=3;
    }
-
-  
-  
 }
 
 void IRAM_ATTR lazer2_int() {
@@ -295,13 +302,9 @@ void IRAM_ATTR lazer2_int() {
     a3=hiz2/a3_t;
     step2_calisma_modu=3;
    }
-    
-
-  
-  
 }
 
-void step_pulse(){
+void IRAM_ATTR step_pulse(){
         
 ///////////////////// STEP1 ///////////////////////
  micros_t = micros();
@@ -478,7 +481,4 @@ micros_t = micros();
     }
 
   }
-
-
-
 }
