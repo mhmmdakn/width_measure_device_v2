@@ -23,8 +23,12 @@
       }
 
       size_t RS485::write(uint8_t byte){
-       
-         return _serial->write(byte);
+         digitalWrite(_de_re_pin,HIGH);
+         size_t s= _serial->write(byte);
+          _serial->flush();
+          digitalWrite(_de_re_pin,LOW);
+         
+         return s;
          
       }
       size_t RS485::write(uint8_t* buffer,size_t size){

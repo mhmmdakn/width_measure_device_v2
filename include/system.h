@@ -4,6 +4,7 @@ typedef enum
 {
   home_error,
   hardware_limit_error,
+  soft_limit_error,
   Error_Count
 
 } Error;
@@ -11,6 +12,7 @@ typedef enum
 typedef struct
 {
   bool limit_ok;
+  bool soft_limit_ok;
   bool limit_neg;
   bool limit_poz;
   bool lazer;
@@ -32,7 +34,7 @@ typedef enum
 typedef struct
 {
   bool home_ok;
-  bool limit_ok;
+  bool limit_ok;  
   bool position_ok;
   Module_Status m1;
   Module_Status m2;

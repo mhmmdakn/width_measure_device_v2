@@ -2,10 +2,11 @@
 
 void default_init()
 {
-     RK.writeUShort(set_init,11);
+   //RK.writeUShort(set_init,11);
     if (RK.readShort(set_init) == -1 || RK.readUShort(set_init) == 11)
     {
         RK.writeUShort(set_init, 0);
+        RK.writeUShort(slave_id, 1);
         RK.writeString(sta_ssid, "REALTEKNO");
         RK.writeString(sta_password, "realtekno2021");
         RK.writeString(ap_ssid, "RT_ENOLCME");
@@ -23,9 +24,11 @@ void default_init()
         RK.writeUInt(eth_dns, IPAddress(0, 0, 0, 0));
         RK.writeUInt(eth_ntp, IPAddress(0, 0, 0, 0));
         RK.writeUShort(width_mode, (short)0);
-        RK.writeDouble(referans_uzunluk_mm, 2400.0);
+        RK.writeDouble(referans_uzunluk_mm, 2400.0);        
         RK.writeDouble(mm_pulse, 40.0 / 800.0);
-
+        RK.writeDouble(speed_rate, 1.0);
+        RK.writeShort(travel_limit_m1, 1700);
+        RK.writeShort(travel_limit_m1, 1000);
         RK.commit();
     }
 }

@@ -40,7 +40,9 @@ void register_init()
     ht_enum.insert(pair<String, int>("width_mode", width_mode));
     ht_enum.insert(pair<String, int>("referans_uzunluk_mm", referans_uzunluk_mm));
     ht_enum.insert(pair<String, int>("mm_pulse", mm_pulse));
-  
+    ht_enum.insert(pair<String, int>("speed_rate", speed_rate));
+    ht_enum.insert(pair<String, int>("travel_limit_m1", travel_limit_m1));
+    ht_enum.insert(pair<String, int>("travel_limit_m2", travel_limit_m2));
 
 
     // pair<int, JSONVar*> p;

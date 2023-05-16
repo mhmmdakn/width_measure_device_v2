@@ -30,6 +30,9 @@ enum{
   width_mode=eth_ntp+4,
   referans_uzunluk_mm=width_mode+2,
   mm_pulse=referans_uzunluk_mm+8,
+  speed_rate=mm_pulse+8,
+  travel_limit_m1=speed_rate+8,
+  travel_limit_m2=travel_limit_m1+2,
   device_config_size,
   };///DEVICE_CONFIG
   

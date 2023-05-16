@@ -9,30 +9,38 @@ bool systemError[Error_Count];
 
 
 void system_task(void * parameter ){
-
+double _mm_pulse=RK.readDouble(mm_pulse);
+double soft_limit_pulse_m1=RK.readShort(travel_limit_m1)/_mm_pulse;
+double soft_limit_pulse_m2=RK.readShort(travel_limit_m2)/_mm_pulse;
     for (;;)
     {
       
       systemStatus.m1.limit_neg=digitalRead(M1_LIMIT_NEG);
       systemStatus.m1.limit_poz=digitalRead(M1_LIMIT_POZ);
       systemStatus.m1.lazer=digitalRead(M1_LAZER_PIN);
-      systemStatus.m1.dir=digitalRead(M1_DIR_PIN);
+      systemStatus.m1.dir=!digitalRead(M1_DIR_PIN);
       systemStatus.m2.limit_neg=digitalRead(M2_LIMIT_NEG);
       systemStatus.m2.limit_poz=digitalRead(M2_LIMIT_POZ);
       systemStatus.m2.lazer=digitalRead(M2_LAZER_PIN);   
       systemStatus.m2.dir=digitalRead(M2_DIR_PIN);
 
+      
+      if(systemState!=homing){       
+        systemStatus.m1.limit_ok=!((systemStatus.m1.limit_neg&&(!systemStatus.m1.dir))||(systemStatus.m1.limit_poz&&systemStatus.m1.dir));
+        systemStatus.m2.limit_ok=!((systemStatus.m2.limit_neg&&(!systemStatus.m2.dir))||(systemStatus.m2.limit_poz&&systemStatus.m2.dir));
+        systemStatus.limit_ok=systemStatus.m1.limit_ok&&systemStatus.m2.limit_ok;
 
-      if(systemState!=homing){
-       
-       systemStatus.m1.limit_ok=!((systemStatus.m1.limit_neg&&(!systemStatus.m1.dir))||(systemStatus.m1.limit_poz&&systemStatus.m1.dir));
-       systemStatus.m2.limit_ok=!(systemStatus.m2.limit_neg&&(!systemStatus.m2.dir)||(systemStatus.m2.limit_poz&&systemStatus.m2.dir));
-       systemStatus.limit_ok=systemStatus.m1.limit_ok&&systemStatus.m2.limit_ok;
+        systemStatus.m1.soft_limit_ok= !(((step1_position_actual_pulse>(soft_limit_pulse_m1-100))&&(systemStatus.m1.dir)) || (step1_position_actual_pulse<=100&&(!systemStatus.m1.dir)));
+        systemStatus.m2.soft_limit_ok= !(((step2_position_actual_pulse>(soft_limit_pulse_m2-100))&&(systemStatus.m2.dir)) || (step2_position_actual_pulse<=100&&(!systemStatus.m2.dir)));
       }
       else{
         systemStatus.m1.limit_ok=!(systemStatus.m1.limit_poz&&systemStatus.m1.dir);
         systemStatus.m2.limit_ok=!(systemStatus.m2.limit_poz&&systemStatus.m2.dir);
         systemStatus.limit_ok=systemStatus.m1.limit_ok&&systemStatus.m2.limit_ok;
+
+        systemStatus.m1.soft_limit_ok= abs(step1_position_actual_pulse)<soft_limit_pulse_m1;
+        systemStatus.m2.soft_limit_ok= abs(step2_position_actual_pulse)<soft_limit_pulse_m2;
+
       }
       vTaskDelay(10/portTICK_PERIOD_MS);
     }
@@ -70,8 +78,8 @@ void sys_init(){
   default_init();
   limit_init();
   //rs485_init();<---------------------------------------------------//aktif edilecek
-  //ethernet_init();  
-  analogOut_init(1,RK.readUShort(width_mode));
+  ethernet_init();  
+  //analogOut_init(1,RK.readUShort(width_mode));
   wifi_init();
  
   // //i2c_init();
@@ -97,12 +105,12 @@ void sys_loop(){
    ESP.restart();
   }
   wifi_loop();
-  //ethernet_loop();
-  //rs485_loop(); <---------------------------------------------------//aktif edilecek
+  ethernet_loop();
+  //rs485_loop(); //<---------------------------------------------------//aktif edilecek
   //read_vcc();
-  analogOut_Update();
+  //analogOut_Update();
 
-
+ // Serial.println(RK.readDouble(mm_pulse));
   // Serial.print("M1_LimNeg:");
   // Serial.print(systemStatus.m1.limit_neg);
   // Serial.print("-M1_LimPoz:");

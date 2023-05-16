@@ -1,6 +1,7 @@
 #include "main.h"
 
 #include "EthernetWebServer.h"
+
 WebServer wifi_webserver(80);
 EthernetWebServer ethernet_webserver(80);
 
@@ -91,13 +92,29 @@ void handle_data(T &server)
   jvar["step2_pos_meas_mm"] = RA.readUShort(step2_pos_meas_mm);
   jvar["step1_pos_actual_mm"] = RA.readUShort(step1_pos_actual_mm);
   jvar["step2_pos_actual_mm"] = RA.readUShort(step2_pos_actual_mm);
-
+  
   String jsonString = JSON.stringify(jvar);
 
   server.send(200, "text/plane", jsonString);
 }
 
+template <class T>
+void handle_m_data(T &server)
+{
+  JSONVar jvar = new JSONVar();
 
+  jvar["m1_limit_neg"] = systemStatus.m1.limit_neg;
+  jvar["m1_limit_poz"] = systemStatus.m1.limit_poz;
+  jvar["m1_lazer"] = systemStatus.m1.lazer;  
+  jvar["m1_dir"] = systemStatus.m1.dir;   
+  jvar["m2_limit_neg"] = systemStatus.m2.limit_neg;
+  jvar["m2_limit_poz"] = systemStatus.m2.limit_poz;
+  jvar["m2_lazer"] = systemStatus.m2.lazer;  
+  jvar["m2_dir"] = systemStatus.m2.dir;                      
+  String jsonString = JSON.stringify(jvar);
+
+  server.send(200, "text/plane", jsonString);
+}
 
 template <class T>
 void processor_write(T &server)
@@ -133,8 +150,8 @@ void processor_write(T &server)
     case 'I':
       RK.writeUInt(start_address,val.toInt());
       break;
-    case 'd':
-      RK.writeDouble(start_address,val.toDouble());
+    case 'd':  
+      RK.writeDouble(start_address,stringToDouble(val));
       break;
     default:
       break;
@@ -153,11 +170,12 @@ void processor_write(T &server)
 template <class T>
 void processor_read(T &server)
 {
-  
+ 
   String message;
   for (size_t i = 0; i < server.args(); i++)
   {
-    String var = server.argName(i);
+    
+    String var = server.argName(i);    
     short param_index = var.indexOf('|');
     String param_name = var.substring(0, param_index);
     short type_index = var.indexOf('|', param_index + 1);
@@ -167,7 +185,7 @@ void processor_read(T &server)
     String val = "";
 
     int start_address = ht_enum.at(param_name) + array_num;
-    
+    int point_count=0;
     switch (type)
     {
     case 'N':
@@ -182,8 +200,12 @@ void processor_read(T &server)
     case 'I':
       val = RK.readUInt(start_address);
       break;
-    case 'd':
-      val = RK.readDouble(start_address);
+    case 'd': 
+         
+      //point_count =doubleDigitCount(RK.readDouble(start_address));      
+      val =String(RK.readDouble(start_address),7);
+      //val =String(RK.readDouble(start_address),0);
+
       break;
     default:
       break;
@@ -199,6 +221,7 @@ void processor_read(T &server)
 void wifi_webserver_init()
 {
   wifi_webserver.on("/data", [](){ handle_data<WebServer>(wifi_webserver); });
+  wifi_webserver.on("/m_data", [](){ handle_m_data<WebServer>(wifi_webserver); });
   wifi_webserver.on("/processor_read", HTTP_POST, [](){ processor_read<WebServer>(wifi_webserver); });
   wifi_webserver.on("/processor_write", HTTP_POST, [](){ processor_write<WebServer>(wifi_webserver); });
   wifi_webserver.onNotFound([](){ handlePage<WebServer>(wifi_webserver); });
@@ -208,6 +231,7 @@ void wifi_webserver_init()
 void ethernet_webserver_init()
 {  
   ethernet_webserver.on("/data", [](){ handle_data<EthernetWebServer>(ethernet_webserver); });
+  ethernet_webserver.on("/m_data", [](){ handle_m_data<EthernetWebServer>(ethernet_webserver); });
   ethernet_webserver.on("/processor_read", HTTP_POST, [](){ processor_read<EthernetWebServer>(ethernet_webserver); });
   ethernet_webserver.on("/processor_write", HTTP_POST, [](){ processor_write<EthernetWebServer>(ethernet_webserver); });
   ethernet_webserver.onNotFound([](){ handlePage<EthernetWebServer>(ethernet_webserver); });
@@ -259,6 +283,41 @@ String dataTypeGet(String path)
   return dataType;
 }
 
+int doubleDigitCount(double d){
+  double num = d - int(d);
+  int count=0;
+  while (abs(num) >= 0.0000001){
+      num = num * 10;
+      count = count + 1;
+      num = num - int(num);
+  }
+  return count;
+}
+
+double stringToDouble(String str)
+{  
+  double result = 0;
+  int pos = str.indexOf('.');
+  String integ = str.substring(0,pos);
+  double integral = integ.toInt();
+  String sFrac = str.substring(pos+1);
+  double fractional = sFrac.toDouble(); // int borked at larger values. Maybe use long here instead.
+
+  double multiplier = sFrac.length();
+  
+  double frac = fractional/pow(10.0,multiplier);
+  
+
+  if (integral >= 0)
+  {
+     result = integral + frac;
+  }else
+  {
+     result = integral - frac;
+  }
+
+  return result;
+}
 
 // void handleNotFound(AsyncWebServerRequest *request)
 // {

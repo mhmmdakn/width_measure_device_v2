@@ -183,12 +183,43 @@
                <label>Slave Id</label>
                <input type='text' name='slave_id|S' placeholder='1' >
               </div>
+              <div class='column'>
+               <label for='mm_pulse'>mm / pulse </label>
+               <input type='text' name='mm_pulse|d' placeholder='0.05' >
+              </div>              
+             </div> 
+
+           <div class='row'>
+              <div class='column'>
+               <label >Speed Rate</label>
+               <input type='text' name='speed_rate|d' placeholder='1' min="0.25" max="2">
+              </div>
+              <div class='column'>
+                <label >Travel Limit M1 (mm) </label>
+                <input type='text' name='travel_limit_m1|S' placeholder='1700' min="1" max="3000">
+               </div>
+               <div class='column'>
+                <label >Travel Limit M2 (mm) </label>
+                <input type='text' name='travel_limit_m2|S' placeholder='1000' min="1" max="3000">
+               </div>
               <!-- <div class='column'>
-               <label for='number_of_samples_for_fabric'>Sampling Reference </label>
-               <input type='text' name='dc_14_0' placeholder='5' value='%dc_14_0%'>
+                <label for='width_mode'>Width Mode</label>
+                <select name="width_mode|S" required="">
+                    <option value="0">Mode 1</option>
+                    <option value="1">Mode 2</option>
+                    <option value="2">Mode 3</option>
+                </select> 
+              </div> -->
+              <!-- <div class='column'>
+               <label>Slave Id</label>
+               <input type='text' name='slave_id|S' placeholder='1' >
+              </div> -->
+              <!-- <div class='column'>
+               <label for='mm_pulse'>mm / pulse </label>
+               <input type='text' name='mm_pulse|d' placeholder='0.05' >
               </div>               -->
              </div> 
-           
+
           </div> 
         
         <button type='submit'>Save</button>

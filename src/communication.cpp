@@ -39,10 +39,11 @@ void wifi_init()
   {
     wifi_durumu = true;
     Serial.print("Connected! IP address: ");
-    Serial.println(WiFi.localIP());
+    Serial.println(WiFi.localIP());    
     WiFi.setAutoConnect(true);
     WiFi.setAutoReconnect(true);
   }
+    
 
   mb_tcp_wifi_server.begin();
   // server.onNotFound(handleNotFound);
@@ -101,7 +102,7 @@ void ethernet_init()
   SPI = SPIClass(HSPI);
   Ethernet.init(ETH_CS_PIN);
   Ethernet.begin(myMac, RK.readUInt(eth_ip), RK.readUInt(eth_dns), RK.readUInt(eth_gateway));
-
+  
   mb_tcp_eth_server.begin();
   ethernet_webserver_init();
 }
